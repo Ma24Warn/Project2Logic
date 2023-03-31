@@ -39,8 +39,38 @@ public class CNFConverter {
         FileWriter writer = new FileWriter(f);
 
 
+        //STEP ONE
+        //Remove > (implies =>) and = (biconditional <=>)
+        //(A > B) becomes (~A | B)
+        //(A = B) becomes ((~A | B) & (~B | A)) 
+        //POSSIBLE REGEX FOR THIS PART??????????????????????????????????
 
 
+
+
+        //STEP TWO
+        //move NOTs inwards. YOULL KNOW YOURE DONE when you go through the sentence and there are no
+        //NOTs in front of any parenthesis. Thats all you have to check for. If you see a NOT in front
+        //of parens, convert that substring into its converted form.
+        //I THINK JUST DISTRIBUTE NOTS AND CANCEL OUT DOUBLE NOTS
+
+
+
+
+
+        //STEP THREE
+        //apply distributive and associative properties
+        //(~A | (B & ~C)) becomes ((~A | B) & (~A | ~C))
+        //maybe just if you see a letter or a NOT then a letter, look at next logic symbol, then
+        //if the next thing is a letter, save that letter (or not letter) instead, either way continue
+        //until an open paren is seen?????
+
+
+
+
+
+        //STEP FOUR
+        //Any clause containing both A and ~A just drops out. Not sure what this means.
 
 
 
