@@ -49,6 +49,26 @@ public class PLResolution {
     public static void PLRes (ArrayList<String> c) {
 
 
+
+        //so i think i have to find VAR and ~VAR and remove them and 
+        //combine their neighbors together with an OR
+        //example from the slides says (A|P),(B|~P) turns into (A|B)
+
+
+
+        //so maybe if you find two that match, remove the VAR and ~VAR from their respective strings
+        //then combine the remaining strings into the first spot or something????????????????????
+
+        //SHOULD I USE STRINGBUILDERS AGAIN? ARRAYLIST OF STRINGBUILDERS???
+        //OR MAYBE AND ARRAYLIST OF CHAR ARRAYLISTS????????????????????????
+
+
+
+
+
+
+
+
     }
 
 
