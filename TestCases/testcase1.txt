@@ -1,1 +1,1 @@
-a=b&c=b&c>a&b>c
+a=b&c=b&c>a&b>c&a|b&A|b&a|B&A|B&A|~b&A|~B&~a|B&~A|B&~~V|B&V|~~B&~(A|B)&~(A&B)
