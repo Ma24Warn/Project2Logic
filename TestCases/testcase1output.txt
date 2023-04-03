@@ -1,3 +1,6 @@
-SOMESENTENCE
-SOMESENTENCE
-SOMESENTENCE
+~a,b
+~b,a
+~c,b
+~b,c
+~c,a
+~b,c

@@ -35,6 +35,11 @@ public class CNFConverter {
 
 
     public static void cnfConvert(String s, File f) throws IOException {
+        String finalString; //string to hold final CNF string with all steps applied to it
+        int index = 0;
+        StringBuilder PLString = new StringBuilder(s);
+        StringBuilder substr;
+
         //create FileWriter object
         FileWriter writer = new FileWriter(f);
 
@@ -45,8 +50,116 @@ public class CNFConverter {
         //(A = B) becomes ((~A | B) & (~B | A)) 
         //POSSIBLE REGEX FOR THIS PART??????????????????????????????????
 
+        //BICONDITIONAL AND IMPLIES (FOR SINGLE CHARS ON BOTH SIDES ONLY)
+        //biconditional (single chars)
+        while (index < PLString.length()-1) {
+            
+            //if biconditional is seen
+            if (PLString.charAt(index) == '=') {
+                substr = new StringBuilder();
+                char prev = PLString.charAt(index-1);
+                char next = PLString.charAt(index+1);
+
+                substr.append("(");
+
+                //check if prev has a not
+                if(index >= 2 && PLString.charAt(index-2) == '~') {
+                    substr.append("~" + prev);
+                }
+                else {
+                    substr.append(prev);
+                }
+
+                substr.append(">");
+
+                //check if next has a not
+                if (next == '~') {
+                    substr.append("~" + PLString.charAt(index+2));
+                }
+                else {
+                    substr.append(next);
+                }
+
+                substr.append(")&(");
 
 
+                //check if next has a not
+                if (next == '~') {
+                    substr.append("~" + PLString.charAt(index+2));
+                }
+                else {
+                    substr.append(next);
+                }
+
+                substr.append(">");
+
+                //check if prev has a not
+                if(index >= 2 && PLString.charAt(index-2) == '~') {
+                    substr.append("~" + prev);
+                }
+                else {
+                    substr.append(prev);
+                }
+
+                substr.append(")");
+
+                PLString.replace(index-1, index+2, substr.toString());
+
+            }
+            
+            index++;  
+
+            //System.out.println(PLString.toString());
+        }
+
+        index = 0; //reset index back to 0 to be reused
+
+        //implies (single chars)
+        while (index < PLString.length()-1) {
+            
+            //if implications is seen
+            if (PLString.charAt(index) == '>') {
+                substr = new StringBuilder();
+                char prev = PLString.charAt(index-1);
+                char next = PLString.charAt(index+1);
+
+                substr.append("~");
+
+                //check if prev has a not
+                if(index >= 2 && PLString.charAt(index-2) == '~') {
+                    substr.append("~" + prev);
+                }
+                else {
+                    substr.append(prev);
+                }
+
+                substr.append("|");
+
+                //check if next has a not
+                if (next == '~') {
+                    substr.append("~" + PLString.charAt(index+2));
+                }
+                else {
+                    substr.append(next);
+                }
+                
+                PLString.replace(index-1, index+2, substr.toString());
+
+            }
+
+            
+            index++;  
+
+            //System.out.println(PLString.toString());
+        }
+
+        
+
+
+        
+
+
+        index = 0;
 
         //STEP TWO
         //move NOTs inwards. YOULL KNOW YOURE DONE when you go through the sentence and there are no
@@ -54,7 +167,31 @@ public class CNFConverter {
         //of parens, convert that substring into its converted form.
         //I THINK JUST DISTRIBUTE NOTS AND CANCEL OUT DOUBLE NOTS
 
+        //FOR SINGLE DIGITS WITHIN ONLY?????
+        while (index < PLString.length()-1) {
+            
+            //if a not is seen
+            if (PLString.charAt(index) == '~') {
+                //if the not is followed by an open parenthesis
+                if (PLString.charAt(index+1) == '(') {
 
+                    //get a substring of everything in the parents
+
+                    //https://www.javatpoint.com/StringBuilder-class
+
+
+                    //flip inner symbol to and or or
+                    
+
+                }
+                
+            }
+
+            
+            index++;  
+
+            //System.out.println(PLString.toString());
+        }
 
 
 
@@ -79,35 +216,32 @@ public class CNFConverter {
 
 
 
+        //NEEDS TO BE EACH CHAR IN THE CLAUSES (NOTS INCLUDED) SEPARATED BY COMMAS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        
+        char curChar;
+        //go through final string and delete parens and replace all | with ,
+        for (int z = 0; z < PLString.toString().length(); z++) {
+            curChar = PLString.charAt(z);
 
-
-        //go through and copy each clause into output file. ---------------------------------------------------------
-        while (SOMETHING) {
-            //store clause (when you see the next & symbol, get substring of everything seen)
-            //MAKE SURE you check that it is an & or the END OF THE SENTENCE (HOW THOUGH?????)
-            //DO IT LIKE THAT UBBI DUBBI PS THING YOU DID!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-
+            //get rid of parenthesis
+            if (curChar == '(' || curChar == ')') {
+                PLString.delete(z, z+1);
+            }
             
-            //change all | symbols into commas with no whitespace between, store back into a string
-            //(There will only be | in each clause)
-
-            
-
-
-
-
-            //output that string into the first (or next) line of the outputfile
-            //output result to file
-            writer.write(SOMESENTENCE);
-            writer.write("\n");
-
-            //REPEAT UNTIL END OF SENTENCE
+            //turn | into ,
+            else if (curChar == '|') {
+                PLString.replace(z, z+1, ",");
+            }
         }
 
 
+
+        String[] clauses = PLString.toString().split("&");
+
+        for (String cl : clauses) {
+            writer.write(cl);
+            writer.write("\n");
+        }
 
         writer.close();
         
