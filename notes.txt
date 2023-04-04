@@ -1,0 +1,72 @@
+Questions:
+CNFConverter
+-ASK HIM IF REMOVING AND COMBINING IS WHAT WE ARE SUPPOSED TO DO
+-ALSO ASK ABOUT HAVING TWO OF ONE ELEMENT AND ONE OF ITS OPPOSITE. DO WE ONLY REMOVE THE ONE PAIR??????????????
+
+PLResolution
+-ASK HIM IF THE WAY TO GO ABOUT THE PARENS AND THE STEPS WOULD BE TO USE A STACK SIMILAR TO WHAT WE DO IN TCOMP
+WHERE WE MAKE SURE THERES A MATCHING AMOUNT OF OPEN AND CLOSED PARENS. ONLY WHEN THE STACK IS EMPTY IS IT DONE
+TRAVERSING
+
+
+For CNFConverter.java, I could use a stack to know where to put things such as ~ and all that even if
+parents are there. if you see an open paren, add it to the stack. if the next paren you see is a closed paren, 
+pop from the stack and use that index to know where to place the thing. FOR EVERY OPEN PAREN YOU SEE, PUSH IT 
+ONTO THE STACK, POP ONE OFF WHEN YOU SEE A CLOSED PAREN. THIS IS LIKE TCOMP MATCHING. THE STACK WILL ONLY BE
+EMPTY WHEN AN OPEN PAREN AND CLOSING PAREN IS SEEN. WHEN IT IS EMPTY, YOU HAVE FOUND WHERE YOU NEED TO BE
+
+stack.push(the open paren)
+for (x = index; x < strBuilder.length; x++) {
+    if (stack.isEmpty) {
+        save index or do something with index
+        break;
+    }
+
+    if (strBuilder.charAt(x) == "(" ) {
+        stack.push( "(" );
+    }
+
+    else if (strBuilder.charAt(x) == ")" ) {
+        stack.pop();
+    }
+
+    else {
+        do nothing
+    }
+
+}
+
+if traversing backwards... check x>0!!!!!!!!!!!!!!!!!!!!!!!
+
+stack.push(the closed paren)
+for (x = index; x > 0; x--) {
+    if (stack.isEmpty) {
+        save index or do something with index
+        break;
+    }
+
+    if (strBuilder.charAt(x) == ")" ) {
+        stack.push( ")" );
+    }
+
+    else if (strBuilder.charAt(x) == "(" ) {
+        stack.pop();
+    }
+
+    else {
+        do nothing
+    }
+
+}
+
+its just the opposite i think.
+
+
+
+
+For PLResolution.java
+
+-check to make sure the output is actually correct
+-Ensure output is correctly formatted, similar to how I did it in CNFConverter.java im assuming
+-figure out what producing an empty clause means and how to only write the one thing to the output file
+-it also has to write to an output file
