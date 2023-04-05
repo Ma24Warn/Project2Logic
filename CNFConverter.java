@@ -168,7 +168,7 @@ public class CNFConverter {
             //if a not is seen
             if (PLString.charAt(index) == '~') {
 
-                //if the not is followed by an open parenthesis
+                //if the not is followed by an open parentheses
                 if (PLString.charAt(index+1) == '(') {
                     nIndex = index+1;
                     stack = new Stack<Character>();
@@ -197,7 +197,7 @@ public class CNFConverter {
                         //else if you see a symbol and the stack size is 1, insert a ~ after it
                         //my reasoning for the stack size needing to be 1 is that if it is 1, then we are not
                         //inside another open paren, which shouldn't get a ~. It would mean we are in the outer-
-                        //most part of the original set of parenthesis, if that makes sense.
+                        //most part of the original set of parentheses, if that makes sense.
                         else if (PLString.charAt(nIndex) == '&' && stack.size() == 1) {
                             PLString.replace(nIndex, nIndex+1, "|~");
 
@@ -269,11 +269,11 @@ public class CNFConverter {
         int ind1 = 0, ind2 = 0, ind3 = 0; //used to hold the indexes after calling the forwardParen/backwardParen methods
         int st = 0, en = 0; //used to get the start and end values for updating PLString with insert()
         boolean more = true, cnfForm = false;
-        String regex = "([a-zA-Z]\\|)([a-zA-Z]\\|)*([a-zA-Z])";
+        String regex = "\\(([~]*[a-zA-Z]\\|)([~]*[a-zA-Z]\\|)*([~]*[a-zA-Z])\\)";
         
 
         /* TESTING REGEX
-        if (Pattern.matches(regex, "A|B|C|D|C|D|(C&D)")) {
+        if (Pattern.matches(regex, "(A|B|C|D|C|D)")) {
             System.out.println("YES!!!");
         }
         else {
@@ -310,28 +310,26 @@ public class CNFConverter {
                         sub = PLString.substring(index+1, ind3+1);
                         System.out.println("THIS IS THE SUBSTRING " + sub);
 
-                        for (int c = 1; c < sub.length()-1; c++) {
+                        
 
-                            //if this string contains any & symbols or parenthesis
-                            if (sub.charAt(c) == '&' || sub.charAt(c) == '(' || sub.charAt(c) == ')') {
-                                //if it does, it must not be in (A|B|C) form
-                                cnfForm = false;
-                                System.out.println("DOES NOT CONFORM: " + sub.charAt(c));
-                                break; //only need to find one thing wrong with it
-
-                                //I ADDED THIS ^ AND IT BROKE AGAIN. IF THERE CANT BE THREE THINGS WITHIN ONE SET
-                                //OF PARENS, HOW DO THESE CLAUSES BECOME WHAT WE WANT?????????????????????????
-                            }
-
-                            //else it must be in the correct form, so we can skip this distribution
-                            else {
-                                cnfForm = true;
-                                more = false;
-                                index = sub.length(); //skip this entire substring in PLString
-                                System.out.println("DOES CONFORM");
-                            }
+                        //if this string contains any & symbols or parentheses
+                        if (!Pattern.matches(regex, sub)) {
+                            //if it does, it must not be in (A|B|C) form
+                            cnfForm = false;
+                            System.out.println("DOES NOT CONFORM: ");
+                            break; //only need to find one thing wrong with it
 
                         }
+
+                        //else it must be in the correct form, so we can skip this distribution
+                        else {
+                            cnfForm = true;
+                            more = false;
+                            index = sub.length(); //skip this entire substring in PLString
+                            System.out.println("DOES CONFORM");
+                        }
+
+                        
 
 
 
@@ -429,7 +427,7 @@ public class CNFConverter {
 
 
         //STEP FOUR
-        //Any clause containing both A and ~A just drops out. Not sure what this means.
+        //Any clause containing both A and ~A just drops out.
 
 
 
@@ -444,7 +442,7 @@ public class CNFConverter {
         for (int z = 0; z < PLString.toString().length(); z++) {
             curChar = PLString.charAt(z);
 
-            //get rid of parenthesis
+            //get rid of parentheses
             if (curChar == '(' || curChar == ')') {
                 PLString.delete(z, z+1);
             }
@@ -521,11 +519,11 @@ public class CNFConverter {
 
 
     //this method takes in a string and an integer (the index in the string to start at)
-    //I will return the index of the closing parenthesis that matches that open parenthesis
+    //I will return the index of the closing parentheses that matches that open parentheses
     //at the starting index
     public static int forwardParen(String s, int i) {
         int pIndex = 0;
-        Stack<Character> stk = new Stack<Character>(); //stack to keep track of parenthesis pairs
+        Stack<Character> stk = new Stack<Character>(); //stack to keep track of parentheses pairs
 
 
 
@@ -543,7 +541,7 @@ public class CNFConverter {
             }
 
 
-            //if the stack is empty, we have found the end parenthesis index
+            //if the stack is empty, we have found the end parentheses index
             if (stk.isEmpty()) {
                 pIndex = x;
                 break;
@@ -559,11 +557,11 @@ public class CNFConverter {
 
 
     //this method takes in a string and an integer (the index in the string to start at)
-    //I will return the index of the open parenthesis that matches that closing parenthesis
+    //I will return the index of the open parentheses that matches that closing parentheses
     //at the starting index
     public static int backwardParen(String s, int i) {
         int pIndex = 0;
-        Stack<Character> stk = new Stack<Character>(); //stack to keep track of parenthesis pairs
+        Stack<Character> stk = new Stack<Character>(); //stack to keep track of parentheses pairs
 
 
 
@@ -581,7 +579,7 @@ public class CNFConverter {
             }
 
 
-            //if the stack is empty, we have found the final parenthesis index
+            //if the stack is empty, we have found the final parentheses index
             if (stk.isEmpty()) {
                 pIndex = x;
                 break;

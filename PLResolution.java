@@ -183,7 +183,7 @@ public class PLResolution {
                 //make file ONLY CONTAIN "Contradiction"
             //    break;
             //} 
-
+                ?//DO NOT SKIP CHECKING WITHIN ITS OWN ARRAYLIST (~A,B) and (A,~B) turns into (B,~B) which needs to cancel out!!!!!!!!!!!!
 
 
         }
