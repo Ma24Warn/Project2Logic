@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Scanner;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 public class CNFConverter {
     
@@ -268,11 +269,22 @@ public class CNFConverter {
         int ind1 = 0, ind2 = 0, ind3 = 0; //used to hold the indexes after calling the forwardParen/backwardParen methods
         int st = 0, en = 0; //used to get the start and end values for updating PLString with insert()
         boolean more = true, cnfForm = false;
+        String regex = "([a-zA-Z]\\|)([a-zA-Z]\\|)*([a-zA-Z])";
+        
+
+        /* TESTING REGEX
+        if (Pattern.matches(regex, "A|B|C|D|C|D|(C&D)")) {
+            System.out.println("YES!!!");
+        }
+        else {
+            System.out.println("NO!!!");
+        }
+        */
 
 //WHAT ABOUT WHEN ITS IN CNF FORM???????????? MAYBE YOU ONLY DISTRIBUTE WITH 1 COMBINATION??????
 //
 
-
+ 
         //need to make sure new possible distributions are accounted for. Once nothing gets modified in the
         //inner while loop, then there must be no new possible distributions, so we can exit this while loop
         while (more == true) {
@@ -412,7 +424,7 @@ public class CNFConverter {
         System.out.println("STEP3    " + PLString.toString());
 
         index = 0; //reset index back to 0 to be reused
-        
+
 
 
 
