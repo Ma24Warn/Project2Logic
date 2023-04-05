@@ -1,12 +1,16 @@
 Questions:
-CNFConverter
+
+PLResolution
 -ASK HIM IF REMOVING AND COMBINING IS WHAT WE ARE SUPPOSED TO DO
 -ALSO ASK ABOUT HAVING TWO OF ONE ELEMENT AND ONE OF ITS OPPOSITE. DO WE ONLY REMOVE THE ONE PAIR??????????????
 
-PLResolution
+
+CNFConverter
 -ASK HIM IF THE WAY TO GO ABOUT THE PARENS AND THE STEPS WOULD BE TO USE A STACK SIMILAR TO WHAT WE DO IN TCOMP
 WHERE WE MAKE SURE THERES A MATCHING AMOUNT OF OPEN AND CLOSED PARENS. ONLY WHEN THE STACK IS EMPTY IS IT DONE
 TRAVERSING
+-WHEN HE SAYS ALL SYMBOLS WILL BE ENCASED IN (). So always (A|B) and never A|B. Does this mean there will never
+be something like (A|B|C) or ((A&B)|(A&C)|(B&C))????? This would affect Distribute step (I FIXED DeMorgans)
 
 
 For CNFConverter.java, I could use a stack to know where to put things such as ~ and all that even if
