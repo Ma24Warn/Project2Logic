@@ -37,25 +37,25 @@ public class CNFConverter {
     }
 
 
+    //this method is what converts the propositional logic into conjunctive normal form and writes
+    //it to an output file
     public static void cnfConvert(String s, File f) throws IOException {
-        String finalString; //string to hold final CNF string with all steps applied to it
-        int index = 0;
-        StringBuilder PLString = new StringBuilder(s);
-        StringBuilder substr;
+        int index = 0; //frequently used as an index for iterating over the PL sentence
+        StringBuilder PLString = new StringBuilder(s); //I chose to use StringBuilder to convert the sentence
+        StringBuilder substr; //a StringBuilder object which is used a few times to store a substring (I probably could have just used a String for this but the end result )
 
         //create FileWriter object
         FileWriter writer = new FileWriter(f);
 
-        System.out.println("ORIGINAL " + PLString.toString());
+        //System.out.println("ORIGINAL " + PLString.toString());
 
         //STEP ONE
         //Remove > (implies) and = (biconditional)
-        int openParen = 0, closedParen = 0, end = 0, begin = 0;
-        String p1 = "", p2 = "";
+        int openParen = 0, closedParen = 0, end = 0, begin = 0; //used to store indexes of parens and the beginning and end of where the substring should go)
+        String p1 = "", p2 = ""; //holds the string values of both sides of the biconditional
 
-        //biconditional DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //biconditional
         while (index < PLString.length()-1) {
-            
 
             //if a biconditional is seen
             if (PLString.charAt(index) == '=') {
@@ -64,39 +64,39 @@ public class CNFConverter {
                 //if next symbol is a letter
                 if (Character.isLetter(PLString.charAt(index+1))) {
                     p1 = String.valueOf(PLString.charAt(index+1));
-                    end = index+2;
+                    end = index+2; //get the index of where the end will be
                 }
 
                 //else if next symbol is an open paren, get a substring of everything within it
                 else if (PLString.charAt(index+1) == '(') {
                     closedParen = forwardParen(PLString.toString(), index+1);
-                    end = closedParen+1;
+                    end = closedParen+1; //get the index of where the end will be
 
                     //get substring
                     p1 = PLString.substring(index+1, closedParen+1);
-
                 }
 
 
                 //if prev symbol is a letter
                 if (Character.isLetter(PLString.charAt(index-1))) {
                     p2 = String.valueOf(PLString.charAt(index-1));
-                    begin = index-1;
+                    begin = index-1; //get the index of where the beginning will be
                 }
 
                 //else if prev symbol is a closed paren, get a substring of everything within it
                 else if (PLString.charAt(index-1) == ')') {
                     openParen = backwardParen(PLString.toString(), index-1);
-                    begin = openParen;
+                    begin = openParen; //get the index of where the beginning will be
 
                     //get substring
                     p2 = PLString.substring(openParen, index);
 
                 }
 
+                //form the substring based on the biconditional rule
                 substr.append("(" + p2 + ">" + p1 + ")&(" + p1 + ">" + p2 + ")");
 
-
+                //replace that substring into PLString at its respective spot
                 PLString.replace(begin, end, substr.toString());
 
 
@@ -107,17 +107,16 @@ public class CNFConverter {
         }
 
 
-        System.out.println("STEP1 P1 " + PLString.toString());
+        //System.out.println("STEP1 P1 " + PLString.toString());
 
         index = 0; //reset index back to 0 to be reused
 
 
-        //implies DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //implies
         while (index < PLString.length()-1) {
             
             //if implications is seen
             if (PLString.charAt(index) == '>') {
-                substr = new StringBuilder();
 
                 //just insert a | in place of the >
                 PLString.replace(index, index+1, "|");
@@ -128,8 +127,8 @@ public class CNFConverter {
                     PLString.insert(index-2, "~");
                 }
 
-                //if the previous thing is a closed paren, call the reverseParen method and insert a ~ at the
-                //returned index
+                //if the previous thing is a closed paren, call the reverseParen method and insert a ~ before the
+                //open paren
                 else if (PLString.charAt(index-1) == ')') {
                     int pIndex = backwardParen(PLString.toString(), index-1);
                     PLString.insert(pIndex, "~");
@@ -142,24 +141,18 @@ public class CNFConverter {
 
         }
 
-        System.out.println("STEP1 P2 " + PLString.toString());
+        //System.out.println("STEP1 P2 " + PLString.toString());
 
-        index = 0;
-
-
-
-
-
-
+        index = 0; //reset index back to 0 to be reused
 
 
 
         //STEP TWO
         //move NOTs inwards.
         int nIndex = 0;
-        Stack<Character> stack;
+        Stack<Character> stack; //stack to help keep track of matching amount of parens
 
-        //DeMorgan's Law DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //DeMorgan's Law
         while (index < PLString.length()-1) {
             
             //if a not is seen
@@ -169,15 +162,13 @@ public class CNFConverter {
                 if (PLString.charAt(index+1) == '(') {
                     nIndex = index+1;
                     stack = new Stack<Character>();
-                    substr = new StringBuilder();
-
 
                     //insert a negative before the first element that was distributed to
                     PLString.insert(index+2, "~");
 
 
-                    //until we have reached the closing paren of the first open paren we see
-                    //this is very similar to my forwardParen and backwardParen, except I am actually
+                    //until we have reached the closing paren of the first open paren we see.
+                    //This is very similar to my forwardParen and backwardParen, except I am actually
                     //modifying the PLString here
                     while (true) {
 
@@ -221,25 +212,21 @@ public class CNFConverter {
 
                 }
 
-                //if the not is followed by another NOT??? SHOULD I ACTuALLY COMBINE THEM????????????????????????????
-                
-
-
             }
 
             index++;  
         }
 
-        System.out.println("STEP2 P1 " + PLString.toString());
+        //System.out.println("STEP2 P1 " + PLString.toString());
 
         index = 0; //reset index back to 0 to be reused
 
-
-        //Remove Double Negatives DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //Remove Double Negatives
         while (index < PLString.length()-1) {
             
             //if a NOT is seen
             if (PLString.charAt(index) == '~') {
+
                 //if it is followed by another NOT
                 if (PLString.charAt(index+1) == '~') {
 
@@ -253,7 +240,7 @@ public class CNFConverter {
 
         }
 
-        System.out.println("STEP2 P2 " + PLString.toString());
+        //System.out.println("STEP2 P2 " + PLString.toString());
 
         index = 0; //reset index back to 0 to be reused
 
@@ -261,30 +248,16 @@ public class CNFConverter {
 
         //STEP THREE
         //apply distributive and associative properties
-        char outer, inner = ' ';
-        String prev = "", next1 = "", next2 = "", sub;
+        char outer, inner = ' '; //holds char values of the outer and inner symbols 
+        String prev = "", next1 = "", next2 = "", sub; //stores parts of substring to be added and original substring
         int ind1 = 0, ind2 = 0, ind3 = 0; //used to hold the indexes after calling the forwardParen/backwardParen methods
         int st = 0, en = 0; //used to get the start and end values for updating PLString with insert()
-        boolean more = true, cnfForm = false;
-        //String regex = "\\((\\(*[~]*[a-zA-Z]\\)*\\|)(\\(*[~]*[a-zA-Z]\\)*\\|)*(\\(*[~]*[a-zA-Z]\\)*)\\)";
+        boolean more = true, cnfForm = false; //used to determine if changes should be made and if a substring is in its final form
+        
+        //below regular expression ensures a substring is in the form "((parentheses with anything in it or letter with or without ~)|(same as the other side of the |))"
         String regex = "\\((([~]*[a-zA-Z])|(\\(.*\\)))\\|(([~]*[a-zA-Z])|(\\(.*\\)))\\)";
-        Stack<Character> stk;
-        //String regex = "\\(([~]*[a-zA-Z]\\|)([~]*[a-zA-Z]\\|)*([~]*[a-zA-Z])\\)";
 
 
-        /* TESTING REGEX
-        if (Pattern.matches(regex, "(((~a&~b)&(~a|~b)|((~a&~b)&(~C&~A)))")) {
-            System.out.println("YES!!!");
-        }
-        else {
-            System.out.println("NO!!!");
-        }
-        */
-
-//WHAT ABOUT WHEN ITS IN CNF FORM???????????? MAYBE YOU ONLY DISTRIBUTE WITH 1 COMBINATION??????
-//
- 
- 
         //need to make sure new possible distributions are accounted for. Once nothing gets modified in the
         //inner while loop, then there must be no new possible distributions, so we can exit this while loop
         while (more == true) {
@@ -292,183 +265,130 @@ public class CNFConverter {
 
             //Distribute
             while (index < PLString.length()-1) {
-
-                //System.out.println("Current Char " + PLString.charAt(index));
-                //System.out.println("index " + index);
-                //System.out.println("PLSTRING:::  " + PLString.toString() + "\n");
                 
                 //if a | or a & is seen
                 if ((PLString.charAt(index) == '|' || PLString.charAt(index) == '&')) {
                     
-                    //if it is followed by an open paren (should never be out of bounds)
+                    //if it is followed by an open paren
                     if (PLString.charAt(index+1) == '(') {
                         more = true; //something is going to be changed, so we have to check for new possible distributions
                         outer = PLString.charAt(index); //save what the char seen was (| or &)
                         substr = new StringBuilder();
 
-
-                        //check what is in the thing we are going to distribute through, if there are no &s and
-                        //NO PARENS, it must look like (a|b|c). Move index to the end of this string and continue
-
+                        //get the string of what we want to distribute over
                         ind3 = forwardParen(PLString.toString(), index+1);
-                        sub = PLString.substring(index+1, ind3+1);
-                        System.out.println("THIS IS THE SUBSTRING " + sub);
-                        System.out.println("THIS IS THE STRING " + PLString.toString());
+                        sub = PLString.substring(index+1, ind3+1);                        
 
-                        
-
-                        //if this string contains any & symbols or parentheses
+                        //if this string does not match the regular expression
                         if (!Pattern.matches(regex, sub)) {
-                            //if it does, it must not be in (A|B|C) form
-                            cnfForm = false;
-                            System.out.println("DOES NOT CONFORM: ");
-                            
-
+                            cnfForm = false; //this means we can modify the PLString
                         }
 
-                        //else it must be in the correct form, so we can skip this distribution
+                        //else it must then be in the correct form, so we can skip this distribution
                         else {
-                            cnfForm = true;
-                            more = false;
-                            //index = sub.length(); //skip this entire substring in PLString
-                            System.out.println("DOES CONFORM");
-                            //break; //only need to find one thing wrong with it
+                            cnfForm = true; //do not modify PLString
+                            more = false; //no changes were actually made, so we set this back to false
                         }
 
-                        //just do it like the demorgans law thing, use above to check if its valid
-
-
-
+                        //if the string did not match the regular expression
                         if (cnfForm == false) {
-                            //System.out.println("WERE IN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                            //if the first element in the parens is a letter
+
+                            //if the first element in the parens is a letter, save it as a string
                             if (Character.isLetter(PLString.charAt(index+2))) {
-                                ind1 = index+2;
+                                ind1 = index+2; //save the index of that letter
                                 next1 = String.valueOf(PLString.charAt(index+2));
-                                inner = PLString.charAt(index+3);
+                                inner = PLString.charAt(index+3); //get the inner symbol
                             }
 
-                            //else if the first element in the parens is a ~ letter
+                            //else if the first element in the parens is a ~ letter, save it as a string
                             if (PLString.charAt(index+2) == '~' && Character.isLetter(PLString.charAt(index+3))) {
-                                ind1 = index+3;
+                                ind1 = index+3; //save the index of that letter
                                 next1 = "~" + String.valueOf(PLString.charAt(index+3));
-                                inner = PLString.charAt(index+4);
+                                inner = PLString.charAt(index+4); //get the inner symbol
                             }
 
-                            //else if the first element in the parens is another open paren
+                            //else if the first element in the parens is another open paren, get a substring of what it contains
                             else if (PLString.charAt(index+2) == '(') {
-                                ind1 = forwardParen(PLString.toString(), index+2);
+                                ind1 = forwardParen(PLString.toString(), index+2); //save the index of the closing paren
                                 next1 = PLString.substring(index+2, ind1+1);
-                                inner = PLString.charAt(ind1+1);
+                                inner = PLString.charAt(ind1+1); //get the inner symbol
                             }
 
                             ind2 = ind1;
 
-                            //I placed this if statement here to hopefully save on memory, even if its a little
-                            //if outermost symbol is the same as the inner symbol (both should only be & or | at this point)
+                            //if outermost symbol is the same as the inner symbol, do not distribute
                             if (outer == inner) {
-                                System.out.println("NOT DIFFERENT");
-                                more = false;
-                                //break; //they should be opposite. Do not distribute.
+                                more = false; //no changes should be made. this will soon be checked before PLString is actually modified
                             }
 
-                            
 
-                            //if the second element in the parens is a letter
+                            //if the second element in the parens is a letter, save it as a string
                             if (Character.isLetter(PLString.charAt(ind2+2))) {
                                 next2 = String.valueOf(PLString.charAt(ind2+2));
-                                en = ind2+4;
+                                en = ind2+4; //save the end index
                             }
 
-                            //else if the second element in the parens is a letter with a ~
+                            //else if the second element in the parens is a letter with a ~, save it as a string
                             else if (PLString.charAt(ind2+2) == '~' && Character.isLetter(PLString.charAt(ind2+3))) {
                                 next2 = "~" + String.valueOf(PLString.charAt(ind2+3));
-                                en = ind2+5;
+                                en = ind2+5; //save the end index
                             }
 
-                            //else if the second element in the parens starts with an open paren
+                            //else if the second element in the parens starts with an open paren, get a substring of what it contains
                             else if (PLString.charAt(ind2+2) == '(') {
                                 ind1 = forwardParen(PLString.toString(), ind2+2);
                                 next2 = PLString.substring(ind2+2, ind1+1);
-                                en = ind1+2;
+                                en = ind1+2; //save the end index
                             }
+
 
                             //if the previous element is a letter, save it as a string
                             if (Character.isLetter(PLString.charAt(index-1))) {
                                 prev = String.valueOf(PLString.charAt(index-1));
-                                st = index-1;
+                                st = index-1; //save the start index
                             }
 
                             //else if the previous element is a letter with a ~, save it as a string
                             else if (PLString.charAt(index-2) == '~' && Character.isLetter(PLString.charAt(index-1))) {
                                 prev = "~" + String.valueOf(PLString.charAt(index-1));
-                                st = index-2;
+                                st = index-2; //save the start index
                             }
 
                             //else if the previous element is a close paren, get a substring of what it contains
                             else if (PLString.charAt(index-1) == ')') {
                                 ind1 = backwardParen(PLString.toString(), index-1);
                                 prev = PLString.substring(ind1, index);
-                                st = ind1;
+                                st = ind1; //save the start index
                             }
 
 
-                            //concatenate all gather strings into substring and update PLString with it
+                            //concatenate all gathered strings into a substring and update PLString with it
                             substr.append("(" + prev + outer + next1 + ")" + inner + "(" + prev + outer + next2 + ")");
 
-                            //System.out.println("NEXT2 " + next2);
-                            //System.out.println("NEXT1 " + next1);
-
-                            System.out.println("SUBS " + substr.toString());
-                            System.out.println("PL " + PLString.toString());
-                            //System.out.println("st " + st);
-                            //System.out.println("en " + en);
-                            System.out.println("BEFORE " + PLString.toString());
 
                             if (more == false) {
                                 //this is for if the outer and inner symbols are not opposites, then do not
                                 //modifying the sentence but continue to go down it
                             }
                             else {
+                                //if the symbols did match, replace the substring into PLString
                                 PLString.replace(st, en, substr.toString());
-                                
                             }
-                            
-                            System.out.println("AFTER " + PLString.toString());
-                            System.out.println("\n");
 
                         }
-    
-
-
-                        
-
 
                     }
 
                     //else if we have to reverse distribute (ex. ((B&C)|D) the D would get distributed)
                     else if ((Character.isLetter(PLString.charAt(index+1)) || PLString.charAt(index+1) == '~') && PLString.charAt(index-1) == ')') {
 
-                        //DISTRIBUTION CAN GO BACKWARDS TOO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        //SO (A|((B&C)|D)... the D would have to be distributed........
-                        //check a symbol, if the next thing is a letter and the previous is a closed paren
-                        //perform the distribution in reverse????
-                        //i want to say this part will be the same but in reverse.
-                        //I MEAN YOU BASICALLY HAVE TO DISTRIBUTE UNTIL IT SUBSTRINGS PASS THE REGEX SO I
-                        //THINK JUST DO IT IN REVERSE
-
                         more = true; //something is going to be changed, so we have to check for new possible distributions
                         outer = PLString.charAt(index); //save what the char seen was (| or &)
                         substr = new StringBuilder();
 
-
-                        //check what is in the thing we are going to distribute through, if there are no &s and
-                        //NO PARENS, it must look like (a|b|c). Move index to the end of this string and continue
-
+                        
                         ind3 = backwardParen(PLString.toString(), index-1);
                         sub = PLString.substring(ind3, index);
-                        System.out.println("THIS IS THE SUBSTRING " + sub);
-                        System.out.println("THIS IS THE STRING " + PLString.toString());
 
                         
 
