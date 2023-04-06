@@ -1,10 +1,7 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Scanner;
 import java.util.Stack;
@@ -450,7 +447,7 @@ public class CNFConverter {
                     }
 
                     //else if we have to reverse distribute (ex. ((B&C)|D) the D would get distributed)
-                    else if (Character.isLetter(PLString.charAt(index+1)) && PLString.charAt(index-1) == ')') {
+                    else if ((Character.isLetter(PLString.charAt(index+1)) || PLString.charAt(index+1) == '~') && PLString.charAt(index-1) == ')') {
 
                         //DISTRIBUTION CAN GO BACKWARDS TOO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         //SO (A|((B&C)|D)... the D would have to be distributed........
@@ -460,7 +457,140 @@ public class CNFConverter {
                         //I MEAN YOU BASICALLY HAVE TO DISTRIBUTE UNTIL IT SUBSTRINGS PASS THE REGEX SO I
                         //THINK JUST DO IT IN REVERSE
 
+                        more = true; //something is going to be changed, so we have to check for new possible distributions
+                        outer = PLString.charAt(index); //save what the char seen was (| or &)
+                        substr = new StringBuilder();
 
+
+                        //check what is in the thing we are going to distribute through, if there are no &s and
+                        //NO PARENS, it must look like (a|b|c). Move index to the end of this string and continue
+
+                        ind3 = backwardParen(PLString.toString(), index-1);
+                        sub = PLString.substring(ind3, index);
+                        System.out.println("THIS IS THE SUBSTRING " + sub);
+                        System.out.println("THIS IS THE STRING " + PLString.toString());
+
+                        
+
+                        //if this string contains any & symbols or parentheses
+                        if (!Pattern.matches(regex, sub)) {
+                            //if it does, it must not be in (A|B|C) form
+                            cnfForm = false;
+                            System.out.println("DOES NOT CONFORM: ");
+                            
+                        }
+
+                        //else it must be in the correct form, so we can skip this distribution
+                        else {
+                            cnfForm = true;
+                            more = false;
+                            //index = sub.length(); //skip this entire substring in PLString
+                            System.out.println("DOES CONFORM");
+                            //break; //only need to find one thing wrong with it
+                        }
+
+                        //just do it like the demorgans law thing, use above to check if its valid
+
+
+
+                        if (cnfForm == false) {
+                            //System.out.println("WERE IN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                            
+                            //else if the first element in the parens is a ~ letter
+                            if (PLString.charAt(index-3) == '~' && Character.isLetter(PLString.charAt(index-2))) {
+                                ind1 = index-3; //set ind1 equal to the ~
+                                next1 = "~" + String.valueOf(PLString.charAt(index-2));
+                                inner = PLString.charAt(index-4);
+                            }
+
+                            //if the first element in the parens is a letter (this has to go after the ~letter check)
+                            else if (Character.isLetter(PLString.charAt(index-2))) {
+                                ind1 = index-2; //set ind1 equal to the letter
+                                next1 = String.valueOf(PLString.charAt(index-2));
+                                inner = PLString.charAt(index-3);
+                            }
+
+                            //else if the first element in the parens is another closed paren
+                            else if (PLString.charAt(index-2) == ')') {
+                                ind1 = backwardParen(PLString.toString(), index-2); //set ind1 equal to the proper open paren
+                                next1 = PLString.substring(ind1, index-1);
+                                inner = PLString.charAt(ind1-1);
+                            }
+
+                            ind2 = ind1;
+
+                            //I placed this if statement here to hopefully save on memory, even if its a little
+                            //if outermost symbol is the same as the inner symbol (both should only be & or | at this point)
+                            if (outer == inner) {
+                                System.out.println("NOT DIFFERENT");
+                                more = false;
+                                //break; //they should be opposite. Do not distribute.
+                            }
+
+                            
+
+                            
+
+                            //else if the second element in the parens is a letter with a ~
+                            if (PLString.charAt(ind2-3) == '~' && Character.isLetter(PLString.charAt(ind2-2))) {
+                                next2 = "~" + String.valueOf(PLString.charAt(ind2-2));
+                                st = ind2-4;
+                            }
+
+                            //if the second element in the parens is a letter (this also has to go second now)
+                            else if (Character.isLetter(PLString.charAt(ind2-2))) {
+                                next2 = String.valueOf(PLString.charAt(ind2-2));
+                                st = ind2-3;
+                            }
+
+                            //else if the second element in the parens starts with a closed paren
+                            else if (PLString.charAt(ind2-2) == ')') {
+                                ind1 = backwardParen(PLString.toString(), ind2-2);
+                                next2 = PLString.substring(ind1, ind2-1);
+                                st = ind1-1;
+                            }
+
+
+
+                            //if the right side element is a letter, save it as a string
+                            if (Character.isLetter(PLString.charAt(index+1))) {
+                                prev = String.valueOf(PLString.charAt(index+1));
+                                en = index+2;
+                            }
+
+                            //else if the right side element is a letter with a ~, save it as a string
+                            else if (PLString.charAt(index+1) == '~' && Character.isLetter(PLString.charAt(index+2))) {
+                                prev = "~" + String.valueOf(PLString.charAt(index+2));
+                                en = index+3;
+                            }
+
+
+
+                            //concatenate all gather strings into substring and update PLString with it
+                            substr.append("(" + prev + outer + next1 + ")" + inner + "(" + prev + outer + next2 + ")");
+
+                            System.out.println("NEXT2 " + next2);
+                            System.out.println("NEXT1 " + next1);
+
+                            System.out.println("SUBS " + substr.toString());
+                            System.out.println("PL " + PLString.toString());
+                            //System.out.println("st " + st);
+                            //System.out.println("en " + en);
+                            System.out.println("BEFORE " + PLString.toString());
+
+                            if (more == false) {
+                                //this is for if the outer and inner symbols are not opposites, then do not
+                                //modifying the sentence but continue to go down it
+                            }
+                            else {
+                                PLString.replace(st, en, substr.toString());
+                                
+                            }
+                            
+                            System.out.println("AFTER " + PLString.toString());
+                            System.out.println("\n");
+
+                        }
 
 
 
@@ -472,6 +602,9 @@ public class CNFConverter {
 
                 }
                 
+                //ind1 = 0;
+                //ind2 = 0;
+                //ind3 = 0;
                 index++;  
                 //System.out.println("INCREMENTED");
                 
