@@ -7,10 +7,19 @@ import java.util.Scanner;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
+/**
+ * This program takes in a Propositional Logic statement written in a file, converts it into
+ * conjunctive normal form, and outputs the results to another file.
+ * 
+ * @author Matthew Warner
+ * @version Spring 2023
+ * 
+ */
+
 public class CNFConverter {
-    
 
     public static void main(String args[]) throws IOException {
+        
         //input test cases
         File test1 = new File("TestCases/testcase1.txt");
         File test2 = new File("TestCases/testcase2.txt");
@@ -33,11 +42,10 @@ public class CNFConverter {
         //send Propositional Logic sentence to CNF converter method
         cnfConvert(plSentence, output5);
 
-        
     }
 
 
-    //this method is what converts the propositional logic into conjunctive normal form and writes
+    //This method is what converts the propositional logic into conjunctive normal form and writes
     //it to an output file
     public static void cnfConvert(String s, File f) throws IOException {
         int index = 0; //frequently used as an index for iterating over the PL sentence
@@ -386,88 +394,70 @@ public class CNFConverter {
                         outer = PLString.charAt(index); //save what the char seen was (| or &)
                         substr = new StringBuilder();
 
-                        
+                        //get the string of what we want to distribute over
                         ind3 = backwardParen(PLString.toString(), index-1);
                         sub = PLString.substring(ind3, index);
 
-                        
-
-                        //if this string contains any & symbols or parentheses
+                        //if this string does not match the regular expression
                         if (!Pattern.matches(regex, sub)) {
-                            //if it does, it must not be in (A|B|C) form
-                            cnfForm = false;
-                            System.out.println("DOES NOT CONFORM: ");
-                            
+                            cnfForm = false; //this means we can modify the PLString                         
                         }
 
-                        //else it must be in the correct form, so we can skip this distribution
+                        //else it must then be in the correct form, so we can skip this distribution
                         else {
                             cnfForm = true;
                             more = false;
-                            //index = sub.length(); //skip this entire substring in PLString
-                            System.out.println("DOES CONFORM");
-                            //break; //only need to find one thing wrong with it
                         }
 
-                        //just do it like the demorgans law thing, use above to check if its valid
-
-
-
+                        //if the string did not match the regular expression
                         if (cnfForm == false) {
-                            //System.out.println("WERE IN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                            
-                            //else if the first element in the parens is a ~ letter
+
+                            //if the first element in the parens is a letter with a not, save it as a string
                             if (PLString.charAt(index-3) == '~' && Character.isLetter(PLString.charAt(index-2))) {
                                 ind1 = index-3; //set ind1 equal to the ~
                                 next1 = "~" + String.valueOf(PLString.charAt(index-2));
-                                inner = PLString.charAt(index-4);
+                                inner = PLString.charAt(index-4); //save the inner symbol
                             }
 
-                            //if the first element in the parens is a letter (this has to go after the ~letter check)
+                            //if the first element in the parens is a letter, save it as a string (this has to go after the ~letter check)
                             else if (Character.isLetter(PLString.charAt(index-2))) {
                                 ind1 = index-2; //set ind1 equal to the letter
                                 next1 = String.valueOf(PLString.charAt(index-2));
-                                inner = PLString.charAt(index-3);
+                                inner = PLString.charAt(index-3); //save the inner symbol
                             }
 
-                            //else if the first element in the parens is another closed paren
+                            //else if the first element in the parens is another closed paren, get a substring of what it contains
                             else if (PLString.charAt(index-2) == ')') {
                                 ind1 = backwardParen(PLString.toString(), index-2); //set ind1 equal to the proper open paren
                                 next1 = PLString.substring(ind1, index-1);
-                                inner = PLString.charAt(ind1-1);
+                                inner = PLString.charAt(ind1-1); //save the inner symbol
                             }
 
                             ind2 = ind1;
 
-                            //I placed this if statement here to hopefully save on memory, even if its a little
-                            //if outermost symbol is the same as the inner symbol (both should only be & or | at this point)
+                            //if outermost symbol is the same as the inner symbol, do not distribute
                             if (outer == inner) {
-                                System.out.println("NOT DIFFERENT");
-                                more = false;
-                                //break; //they should be opposite. Do not distribute.
+                                more = false; //no changes should be made. this will soon be checked before PLString is actually modified
                             }
 
-                            
 
-                            
-
-                            //else if the second element in the parens is a letter with a ~
+                            //else if the second element in the parens is a letter with a ~, save it as a string
                             if (PLString.charAt(ind2-3) == '~' && Character.isLetter(PLString.charAt(ind2-2))) {
                                 next2 = "~" + String.valueOf(PLString.charAt(ind2-2));
-                                st = ind2-4;
+                                st = ind2-4; //save the start index
                             }
 
-                            //if the second element in the parens is a letter (this also has to go second now)
+                            //if the second element in the parens is a letter, save it as a string (this also has to go second now)
                             else if (Character.isLetter(PLString.charAt(ind2-2))) {
                                 next2 = String.valueOf(PLString.charAt(ind2-2));
-                                st = ind2-3;
+                                st = ind2-3; //save the start index
                             }
 
-                            //else if the second element in the parens starts with a closed paren
+                            //else if the second element in the parens starts with a closed paren, get a substring of what it contains
                             else if (PLString.charAt(ind2-2) == ')') {
                                 ind1 = backwardParen(PLString.toString(), ind2-2);
                                 next2 = PLString.substring(ind1, ind2-1);
-                                st = ind1-1;
+                                st = ind1-1; //save the start index
                             }
 
 
@@ -475,77 +465,54 @@ public class CNFConverter {
                             //if the right side element is a letter, save it as a string
                             if (Character.isLetter(PLString.charAt(index+1))) {
                                 prev = String.valueOf(PLString.charAt(index+1));
-                                en = index+2;
+                                en = index+2; //save the end index
                             }
 
                             //else if the right side element is a letter with a ~, save it as a string
                             else if (PLString.charAt(index+1) == '~' && Character.isLetter(PLString.charAt(index+2))) {
                                 prev = "~" + String.valueOf(PLString.charAt(index+2));
-                                en = index+3;
+                                en = index+3; //save the end index
                             }
 
 
 
-                            //concatenate all gather strings into substring and update PLString with it
+                            //concatenate all gathered strings into a substring and update PLString with it
                             substr.append("(" + prev + outer + next1 + ")" + inner + "(" + prev + outer + next2 + ")");
 
-                            System.out.println("NEXT2 " + next2);
-                            System.out.println("NEXT1 " + next1);
-
-                            System.out.println("SUBS " + substr.toString());
-                            System.out.println("PL " + PLString.toString());
-                            //System.out.println("st " + st);
-                            //System.out.println("en " + en);
-                            System.out.println("BEFORE " + PLString.toString());
 
                             if (more == false) {
                                 //this is for if the outer and inner symbols are not opposites, then do not
                                 //modifying the sentence but continue to go down it
                             }
                             else {
+                                //if the symbols did match, replace the substring into PLString
                                 PLString.replace(st, en, substr.toString());
                                 
                             }
-                            
-                            System.out.println("AFTER " + PLString.toString());
-                            System.out.println("\n");
 
                         }
 
-
-
-
-
                     }
-
-
 
                 }
                 
-                //ind1 = 0;
-                //ind2 = 0;
-                //ind3 = 0;
                 index++;  
-                //System.out.println("INCREMENTED");
                 
             }
 
             index = 0;
-            System.out.println("LOOKHERE " + PLString.toString());
+
         }
 
-        System.out.println("STEP3    " + PLString.toString());
+        //System.out.println("STEP3    " + PLString.toString());
         
-
         index = 0; //reset index back to 0 to be reused
 
 
-
-
-
         //Sort and print out clauses
-        char curChar;
-        //go through final string and delete parens and replace all | with ,
+        char curChar; //holds the value of the current character we are looking at
+
+        //go through final string and delete all parens and replace all | with ,
         for (int z = 0; z < PLString.toString().length(); z++) {
             curChar = PLString.charAt(z);
 
@@ -555,38 +522,37 @@ public class CNFConverter {
             }
         }
 
-
-        //String array to get each clause which are separated by the & symbol
+        //String array to get each clause, all of which are separated by the & symbol
         String[] clauses = PLString.toString().split("&");
 
+        //go through each of those clauses
         for (String str : clauses) {
 
             //create String ArrayLists to hold the regular letters and letters with a ~
             ArrayList<String> pos = new ArrayList<String>();
             ArrayList<String> neg = new ArrayList<String>();
 
+            //go through the values of each clause
             for (int x = 0; x < str.length(); x++) {
 
-                //if the character is negative
+                //if the character has a ~
                 if (str.charAt(x) == '~') {
-                    neg.add("~" + str.charAt(x+1));
+                    neg.add("~" + str.charAt(x+1)); //add it to the negative arraylist
                 }
 
-                //if the first character is letter(prevents out of bounds for the next else if)
+                //else if the first character is letter (prevents out of bounds for the next else if)
                 else if (x == 0 && Character.isLetter(str.charAt(x))) {
-                    pos.add(Character.toString(str.charAt(x)));
+                    pos.add(Character.toString(str.charAt(x))); //add it to the positive arraylist
                 }
 
                 //else if the character is a letter which is not preceded by a NOT
                 else if (x != 0 && Character.isLetter(str.charAt(x)) && str.charAt(x-1) != '~') {
-                    pos.add(Character.toString(str.charAt(x)));
+                    pos.add(Character.toString(str.charAt(x))); //add it to the positive arraylist
                 }
-
-
 
             }
 
-            //sort the ArrayLists
+            //sort the ArrayLists in lexicographical order
             Collections.sort(pos);
             Collections.sort(neg);
 
@@ -598,40 +564,18 @@ public class CNFConverter {
             writer.write("\n");
         }
 
-
-
-        /* 
-        String[] clauses = PLString.toString().split("&");
-        String[] clFinal = new String[clauses.length];
-
-
-        for (int x = 0; x < clauses.length; x++) {
-            char cArray[] = clauses[x].toCharArray();
-            Arrays.sort(cArray);
-            clFinal[x] = cArray.toString();
-
-        }
-        
-
-        for (String cl : clFinal) {
-            writer.write(cl);
-            writer.write("\n");
-        }*/
-
         writer.close();
-        
     }
 
 
 
 
-    //this method takes in a string and an integer (the index in the string to start at)
-    //I will return the index of the closing parentheses that matches that open parentheses
+    //This method takes in a string and an integer (the index is the string to start at)
+    //It will return the index of the closing parentheses that matches that open parentheses
     //at the starting index
     public static int forwardParen(String s, int i) {
         int pIndex = 0;
         Stack<Character> stk = new Stack<Character>(); //stack to keep track of parentheses pairs
-
 
 
         //go through string starting at the sent index,
@@ -647,14 +591,11 @@ public class CNFConverter {
                 stk.pop();
             }
 
-
             //if the stack is empty, we have found the end parentheses index
             if (stk.isEmpty()) {
                 pIndex = x;
                 break;
             }
-
-
 
         }
 
@@ -663,8 +604,8 @@ public class CNFConverter {
 
 
 
-    //this method takes in a string and an integer (the index in the string to start at)
-    //I will return the index of the open parentheses that matches that closing parentheses
+    //This method takes in a string and an integer (the index is the string to start at)
+    //It will return the index of the open parentheses that matches that closing parentheses
     //at the starting index
     public static int backwardParen(String s, int i) {
         int pIndex = 0;
@@ -672,7 +613,7 @@ public class CNFConverter {
 
 
 
-        //go through string starting at the sent index,
+        //go through string backwards starting at the sent index, 
         for (int x = i; x >= 0; x--) {
 
             //if another closing paren is seen, push to the stack. (this also adds the initial closing paren)
@@ -685,22 +626,15 @@ public class CNFConverter {
                 stk.pop();
             }
 
-
             //if the stack is empty, we have found the final parentheses index
             if (stk.isEmpty()) {
                 pIndex = x;
                 break;
             }
 
-
-
         }
 
         return pIndex;
     }
-
-
-
-
 
 }
