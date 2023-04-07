@@ -19,28 +19,37 @@ import java.util.regex.Pattern;
 public class CNFConverter {
 
     public static void main(String args[]) throws IOException {
-        
+
         //input test cases
-        File test1 = new File("TestCases/testcase1.txt");
-        File test2 = new File("TestCases/testcase2.txt");
-        File test3 = new File("TestCases/testcase3.txt");
-        File test4 = new File("TestCases/testcase4.txt");
-        File test5 = new File("TestCases/testcase5.txt");
+        File test1 = new File("TestCases/trivial1_in.txt"); //good
+        File test2 = new File("TestCases/trivial2_in.txt"); //good?
+        File test3 = new File("TestCases/easy1_in.txt");    //good
+        File test4 = new File("TestCases/easy2_in.txt");    //good?
+        File test5 = new File("TestCases/easy3_in.txt");    //good?
+        File test6 = new File("TestCases/medium1_in.txt");  //good?
+        File test7 = new File("TestCases/medium2_in.txt");  //bad
+        File test8 = new File("TestCases/medium3_in.txt");  //bad
+        File test9 = new File("TestCases/hard2_in.txt");    //bad
+        
 
         //output text files
-        File output1 = new File("TestCases/testcase1output.txt");
-        File output2 = new File("TestCases/testcase2output.txt");
-        File output3 = new File("TestCases/testcase3output.txt");
-        File output4 = new File("TestCases/testcase4output.txt");
-        File output5 = new File("TestCases/testcase5output.txt");
+        File output1 = new File("TestCases/trivial1_CNF.txt");  //good
+        File output2 = new File("TestCases/trivial2_CNF.txt");  //good?
+        File output3 = new File("TestCases/easy1_CNF.txt");     //good
+        File output4 = new File("TestCases/easy2_CNF.txt");     //good?
+        File output5 = new File("TestCases/easy3_CNF.txt");     //good?
+        File output6 = new File("TestCases/medium1_CNF.txt");   //good?
+        File output7 = new File("TestCases/medium2_CNF.txt");   //bad
+        File output8 = new File("TestCases/medium3_CNF.txt");   //bad
+        File output9 = new File("TestCases/hard2_CNF.txt");     //bad
 
         //read in from file
-        Scanner scan = new Scanner(test5);
+        Scanner scan = new Scanner(test6);
         String plSentence = scan.nextLine();
         scan.close();
 
         //send Propositional Logic sentence to CNF converter method
-        cnfConvert(plSentence, output5);
+        cnfConvert(plSentence, output6);
 
     }
 
@@ -49,13 +58,13 @@ public class CNFConverter {
     //it to an output file
     public static void cnfConvert(String s, File f) throws IOException {
         int index = 0; //frequently used as an index for iterating over the PL sentence
-        StringBuilder PLString = new StringBuilder(s); //I chose to use StringBuilder to convert the sentence
+        StringBuilder PLString = new StringBuilder(s.replace(" ", "")); //I chose to use StringBuilder to convert the sentence. This also gets rid of whitespace
         StringBuilder substr; //a StringBuilder object which is used a few times to store a substring (I probably could have just used a String for this but the end result )
 
         //create FileWriter object
         FileWriter writer = new FileWriter(f);
 
-        //System.out.println("ORIGINAL " + PLString.toString());
+        System.out.println("ORIGINAL " + PLString.toString());
 
         //STEP ONE
         //Remove > (implies) and = (biconditional)
@@ -115,7 +124,7 @@ public class CNFConverter {
         }
 
 
-        //System.out.println("STEP1 P1 " + PLString.toString());
+        System.out.println("STEP1 P1 " + PLString.toString());
 
         index = 0; //reset index back to 0 to be reused
 
@@ -132,7 +141,7 @@ public class CNFConverter {
 
                 //if the previous thing is a single letter, put a ~ before it
                 if (Character.isLetter(PLString.charAt(index-1))) {
-                    PLString.insert(index-2, "~");
+                    PLString.insert(index-1, "~");
                 }
 
                 //if the previous thing is a closed paren, call the reverseParen method and insert a ~ before the
@@ -149,7 +158,7 @@ public class CNFConverter {
 
         }
 
-        //System.out.println("STEP1 P2 " + PLString.toString());
+        System.out.println("STEP1 P2 " + PLString.toString());
 
         index = 0; //reset index back to 0 to be reused
 
@@ -225,7 +234,7 @@ public class CNFConverter {
             index++;  
         }
 
-        //System.out.println("STEP2 P1 " + PLString.toString());
+        System.out.println("STEP2 P1 " + PLString.toString());
 
         index = 0; //reset index back to 0 to be reused
 
@@ -248,7 +257,7 @@ public class CNFConverter {
 
         }
 
-        //System.out.println("STEP2 P2 " + PLString.toString());
+        System.out.println("STEP2 P2 " + PLString.toString());
 
         index = 0; //reset index back to 0 to be reused
 
@@ -285,17 +294,25 @@ public class CNFConverter {
 
                         //get the string of what we want to distribute over
                         ind3 = forwardParen(PLString.toString(), index+1);
-                        sub = PLString.substring(index+1, ind3+1);                        
+                        sub = PLString.substring(index+1, ind3+1);   
+                        
+                        System.out.println("SUBSTRING IS " + sub);
 
                         //if this string does not match the regular expression
                         if (!Pattern.matches(regex, sub)) {
                             cnfForm = false; //this means we can modify the PLString
+
+                            System.out.println("does not conform");
+
                         }
 
                         //else it must then be in the correct form, so we can skip this distribution
                         else {
                             cnfForm = true; //do not modify PLString
                             more = false; //no changes were actually made, so we set this back to false
+                        
+                            System.out.println("does conform");
+                        
                         }
 
                         //if the string did not match the regular expression
@@ -372,6 +389,11 @@ public class CNFConverter {
 
                             //concatenate all gathered strings into a substring and update PLString with it
                             substr.append("(" + prev + outer + next1 + ")" + inner + "(" + prev + outer + next2 + ")");
+
+                            System.out.println("prev is " + prev);
+                            System.out.println("next1 is " + next1);
+                            System.out.println("next2 is " + next2);
+                            System.out.println("substring to insert is " + substr.toString());
 
 
                             if (more == false) {
@@ -504,7 +526,7 @@ public class CNFConverter {
 
         }
 
-        //System.out.println("STEP3    " + PLString.toString());
+        System.out.println("STEP3    " + PLString.toString());
         
         index = 0; //reset index back to 0 to be reused
 

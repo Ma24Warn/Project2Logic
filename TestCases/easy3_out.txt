@@ -1,0 +1,8 @@
+u,w
+v,w,z
+w,x
+w,~x
+~u
+~u,v,z
+~u,x
+~u,~x
