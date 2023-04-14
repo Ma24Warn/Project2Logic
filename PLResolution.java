@@ -1,15 +1,22 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
+/**
+ * This program takes in a file containing a Proposititional Logic sentence in Conjunctive Normal Form.
+ * It will then perform resolution on the clauses until it runs out of clauses to resolve or it produces
+ * and empty clause
+ * 
+ * @author Matthew Warner
+ * @version Spring 2023
+ * 
+ */
+
 public class PLResolution {
     
-
-
     public static void main(String args[]) throws IOException {
         ArrayList<ArrayList<String>> clauses = new ArrayList<ArrayList<String>>();
         ArrayList<String> innerList;
@@ -26,7 +33,8 @@ public class PLResolution {
         File input6 = new File("TestCases/medium1_CNF.txt");   //good?
         File input7 = new File("TestCases/medium2_CNF.txt");   //bad
         File input8 = new File("TestCases/medium3_CNF.txt");   //bad
-        File input9 = new File("TestCases/hard2_CNF.txt");     //bad
+        File input9 = new File("TestCases/hard1_CNF.txt");     //bad
+        File input10 = new File("TestCases/hard2_CNF.txt");     //bad
         
 
         //output text files
@@ -38,13 +46,14 @@ public class PLResolution {
         File output6 = new File("TestCases/medium1_out.txt");   //good?
         File output7 = new File("TestCases/medium2_out.txt");   //bad
         File output8 = new File("TestCases/medium3_out.txt");   //bad
-        File output9 = new File("TestCases/hard2_out.txt");     //bad
+        File output9 = new File("TestCases/hard1_out.txt");     //bad
+        File output10 = new File("TestCases/hard2_out.txt");     //bad
 
         //create the FileWriter 
-        FileWriter writer = new FileWriter(output3);
+        FileWriter writer = new FileWriter("TestCases/OUTPUTTESTER.txt");
 
         //read in from file
-        Scanner scan = new Scanner(input3);
+        Scanner scan = new Scanner(input10);
 
         //get each line of the file and add its individual characters to their respective String ArrayList and
         //add all of those to another ArrayList (This is the best way I could think of that would make editing
@@ -53,17 +62,13 @@ public class PLResolution {
             innerList = new ArrayList<String>();
 
             line = scan.nextLine();
-            tempArray = line.toCharArray();
+            tempArray = line.toCharArray(); //turn each line into a char array
 
+            //go through each character in the char array and add the letters or ~letters into an arraylist
             for (int x = 0; x < tempArray.length; x++) {
 
-                //ignore commas
-                if (tempArray[x] == ',') {
-
-                }
-                
                 //if its a not, get both the not and next letter
-                else if (tempArray[x] == '~') {
+                if (tempArray[x] == '~') {
                     tempString = new StringBuilder();
                     tempString.append(tempArray[x]);
                     tempString.append(tempArray[x+1]);
@@ -79,29 +84,23 @@ public class PLResolution {
                     innerList.add(String.valueOf(tempArray[x]));
                 }
                 
-
-
-                //System.out.println(innerList.toString());
             }
 
+            //add each arraylist clause into another arraylist
             clauses.add(innerList);
 
         }
         scan.close();
 
-
-        //FOR TESTING (DELETE WHEN DONE!!!!!!!!!!)
-        System.out.println("STARTING CLAUSES: " + clauses.toString());
-
+        
         //call the resolution method
         boolean result = PLRes(clauses);
+
         
         //if it produced an empty clause
         if (result) {
-            //write "Contradiction" to file
             writer.write("Contradiction");
         }
-
 
         //else it ran out of clauses to resolve
         else {
@@ -117,10 +116,6 @@ public class PLResolution {
             //sort the clauses by ASCII order
             Collections.sort(finalClauses, Collections.reverseOrder());
 
-
-            //System.out.println("\nSORTED: " + finalClauses);
-
-
             //write the clauses to the output file (already sorted in ASCII order)
             for (String s : finalClauses) {
                 writer.write(s + "\n");
@@ -134,12 +129,15 @@ public class PLResolution {
     }
 
 
+    //this method will go through all of the CNF clauses and perform resolution on them until it
+    //a. runs out of pairs of clauses to resolve, where it will then return false
+    //b. produces an empty clause, where it will then return true
     public static boolean PLRes (ArrayList<ArrayList<String>> c) {
-        ArrayList<String> cur1, cur2, sub1, sub2;
-        ArrayList<ArrayList<String>> resolvents;
-        String curElem;
+        ArrayList<String> cur1, cur2, sub1, sub2; //used to hold clauses
+        ArrayList<ArrayList<String>> resolvents; //holds the clauses created when two clauses are resolved
+        String curElem; //holds the current element we are looking for
 
-        
+        //loop until something is returned
         while (true) {
 
             resolvents = new ArrayList<ArrayList<String>>();
@@ -152,11 +150,14 @@ public class PLResolution {
                 for (int y = 0; y < c.size(); y++) {
                     cur2 = c.get(y);
 
+
+                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     //skip checking within the same arraylist SHOULD I DO THIS??????????????????????????????????
                     if (x == y) {
                         break;
-                    }
-                    
+                    } //~b,b AND ALSO A b,~b... why arent they resolving????
+                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
                     //for each element in the first arraylist (clause)
                     for (int z = 0; z < cur1.size(); z++) {
@@ -198,40 +199,10 @@ public class PLResolution {
                         }
                     }
 
-
-                    
-                    //if it is, return false
-
-                    //else add NEW to CLAUSES
-
-
-
-                    //CLAUSES is the set of all clauses
-                    //NEW is an empty list thing
-
-                    //From the site thing. if any clause resolution produces any empty clause, then conradiction
-                    //it only has to be one empty clause to be unsatisfiable
-
-
-                    //if it is not empty (clause), add the clause to NEW
-
-                    //THE REASON IT SAYS RESOLVENTS IS BECAUSE IT IS TALKING ABOUT MULTIPLE RESOLUTIONS FROM A PAIR
-                    //so i do it letter by letter, every time two clauses has opposites, add that resolvent to NEW
-                    //if you see another in the same clause, add that one to NEW
-                    //after a pair has been checked, append all of those resolvents to NEW
-
-                    //outside of for loop:
-                        //if NEW is a subset of CLAUSES, then return false. IT IS DONE???
-                        //else add NEW to the CLAUSES
-
-
-
                 }
 
 
             }
-
-            //CHECK FOR DUPLICATES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             //if the resolvents from the previous two clauses are not a subset of the list of all clauses
             //add the non duplicates into the list of all clauses
@@ -258,6 +229,7 @@ public class PLResolution {
     }
 
 
+    //this method takes in a string and returns the opposite of it (x into ~x or ~x into x)
     public static String getOpposite(String s) {
         char c = s.charAt(0);
 
@@ -276,14 +248,6 @@ public class PLResolution {
         }
 
 
-
     }
-
-
-
-
-
-
-
-    
+ 
 }

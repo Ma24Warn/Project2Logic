@@ -97,6 +97,9 @@ EASY2_CNF DEFINITELY SHOULD NOT HAVE A ~Z
 
 
 Ask about removing opposites within the same clause, is this just removing opposites within the same clause or does this also yield a new clause?
+I am assuming we have to because while I was testing the hard2 case, I didn't get a contradiction like I was supposed to. But I noticed in my output 
+file, I was getting a clause "~b,b" which definitely shouldn't be there and if it was resolved, it would have given me the needed empty clause. I just want 
+to be sure my thinking is correct here.
 
 Ask about the ordering for the elements within each clause before they are written to the file. Should the elements within
 each clause be sorted lexicographically and then each clause should be written to the file in ASCII order as stated in the instructions?
