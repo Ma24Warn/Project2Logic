@@ -25,29 +25,29 @@ public class PLResolution {
         char[] tempArray;
 
         //input test cases
-        File input1 = new File("TestCases/trivial1_CNF.txt");  //good
-        File input2 = new File("TestCases/trivial2_CNF.txt");  //good?
-        File input3 = new File("TestCases/easy1_CNF.txt");     //good
-        File input4 = new File("TestCases/easy2_CNF.txt");     //good?
-        File input5 = new File("TestCases/easy3_CNF.txt");     //good?
-        File input6 = new File("TestCases/medium1_CNF.txt");   //good?
-        File input7 = new File("TestCases/medium2_CNF.txt");   //bad
-        File input8 = new File("TestCases/medium3_CNF.txt");   //bad
-        File input9 = new File("TestCases/hard1_CNF.txt");     //bad
-        File input10 = new File("TestCases/hard2_CNF.txt");     //bad
+        File input1 = new File("TestCases/trivial1_CNF.txt");  
+        File input2 = new File("TestCases/trivial2_CNF.txt");  
+        File input3 = new File("TestCases/easy1_CNF.txt");    
+        File input4 = new File("TestCases/easy2_CNF.txt");     
+        File input5 = new File("TestCases/easy3_CNF.txt");    
+        File input6 = new File("TestCases/medium1_CNF.txt");   
+        File input7 = new File("TestCases/medium2_CNF.txt");   
+        File input8 = new File("TestCases/medium3_CNF.txt");   
+        File input9 = new File("TestCases/hard1_CNF.txt");    
+        File input10 = new File("TestCases/hard2_CNF.txt");  
         
 
         //output text files
-        File output1 = new File("TestCases/trivial1_out.txt");  //good
-        File output2 = new File("TestCases/trivial2_out.txt");  //good?
-        File output3 = new File("TestCases/easy1_out.txt");     //good
-        File output4 = new File("TestCases/easy2_out.txt");     //good?
-        File output5 = new File("TestCases/easy3_out.txt");     //good?
-        File output6 = new File("TestCases/medium1_out.txt");   //good?
-        File output7 = new File("TestCases/medium2_out.txt");   //bad
-        File output8 = new File("TestCases/medium3_out.txt");   //bad
-        File output9 = new File("TestCases/hard1_out.txt");     //bad
-        File output10 = new File("TestCases/hard2_out.txt");     //bad
+        File output1 = new File("TestCases/trivial1_out.txt");  
+        File output2 = new File("TestCases/trivial2_out.txt");  
+        File output3 = new File("TestCases/easy1_out.txt");     
+        File output4 = new File("TestCases/easy2_out.txt");    
+        File output5 = new File("TestCases/easy3_out.txt");    
+        File output6 = new File("TestCases/medium1_out.txt");  
+        File output7 = new File("TestCases/medium2_out.txt");   
+        File output8 = new File("TestCases/medium3_out.txt");  
+        File output9 = new File("TestCases/hard1_out.txt");  
+        File output10 = new File("TestCases/hard2_out.txt");  
 
         //create the FileWriter 
         FileWriter writer = new FileWriter("TestCases/OUTPUTTESTER.txt");
@@ -104,7 +104,6 @@ public class PLResolution {
 
         //else it ran out of clauses to resolve
         else {
-            System.out.println("ALL OF THE CLAUSES: " + clauses);
             ArrayList<String> finalClauses = new ArrayList<String>();
 
             //turn each inner arraylist into a string (removing square brackets and whitespace) so that the clauses can be sorted

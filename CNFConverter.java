@@ -21,27 +21,27 @@ public class CNFConverter {
     public static void main(String args[]) throws IOException {
 
         //input test cases
-        File input1 = new File("TestCases/trivial1_in.txt"); //good
-        File input2 = new File("TestCases/trivial2_in.txt"); //good?
-        File input3 = new File("TestCases/easy1_in.txt");    //good
-        File input4 = new File("TestCases/easy2_in.txt");    //good?
-        File input5 = new File("TestCases/easy3_in.txt");    //good?
-        File input6 = new File("TestCases/medium1_in.txt");  //good?
-        File input7 = new File("TestCases/medium2_in.txt");  //bad
-        File input8 = new File("TestCases/medium3_in.txt");  //bad
-        File input9 = new File("TestCases/hard2_in.txt");    //bad
+        File input1 = new File("TestCases/trivial1_in.txt"); 
+        File input2 = new File("TestCases/trivial2_in.txt"); 
+        File input3 = new File("TestCases/easy1_in.txt");   
+        File input4 = new File("TestCases/easy2_in.txt");    
+        File input5 = new File("TestCases/easy3_in.txt");    
+        File input6 = new File("TestCases/medium1_in.txt");  
+        File input7 = new File("TestCases/medium2_in.txt");  
+        File input8 = new File("TestCases/medium3_in.txt");  
+        File input9 = new File("TestCases/hard2_in.txt");    
         
 
         //output text files
-        File output1 = new File("TestCases/trivial1_CNF.txt");  //good
-        File output2 = new File("TestCases/trivial2_CNF.txt");  //good?
-        File output3 = new File("TestCases/easy1_CNF.txt");     //good
-        File output4 = new File("TestCases/easy2_CNF.txt");     //good?
-        File output5 = new File("TestCases/easy3_CNF.txt");     //good?
-        File output6 = new File("TestCases/medium1_CNF.txt");   //good?
-        File output7 = new File("TestCases/medium2_CNF.txt");   //bad
-        File output8 = new File("TestCases/medium3_CNF.txt");   //bad
-        File output9 = new File("TestCases/hard2_CNF.txt");     //bad
+        File output1 = new File("TestCases/trivial1_CNF.txt");  
+        File output2 = new File("TestCases/trivial2_CNF.txt");  
+        File output3 = new File("TestCases/easy1_CNF.txt");   
+        File output4 = new File("TestCases/easy2_CNF.txt");     
+        File output5 = new File("TestCases/easy3_CNF.txt");    
+        File output6 = new File("TestCases/medium1_CNF.txt");   
+        File output7 = new File("TestCases/medium2_CNF.txt");  
+        File output8 = new File("TestCases/medium3_CNF.txt");  
+        File output9 = new File("TestCases/hard2_CNF.txt");     
 
         //read in from file
         Scanner scan = new Scanner(input4);
