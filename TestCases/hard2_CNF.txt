@@ -1,8 +1,5 @@
-c,~a,~b
-d,e,~a,~b
-~a
-d
-~b,~d,~e
-d,e
 b,e
 b,~c
+d
+~a
+~b,~e

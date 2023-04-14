@@ -1,13 +1,16 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class PLResolution {
     
 
 
-    public static void main(String args[]) throws FileNotFoundException {
+    public static void main(String args[]) throws IOException {
         ArrayList<ArrayList<String>> clauses = new ArrayList<ArrayList<String>>();
         ArrayList<String> innerList;
         String line; 
@@ -15,20 +18,33 @@ public class PLResolution {
         char[] tempArray;
 
         //input test cases
-        File test1 = new File("TestCases/restest1.txt");
-        File test2 = new File("TestCases/restest2.txt");
-        File test3 = new File("TestCases/restest3.txt");
-
+        File input1 = new File("TestCases/trivial1_CNF.txt");  //good
+        File input2 = new File("TestCases/trivial2_CNF.txt");  //good?
+        File input3 = new File("TestCases/easy1_CNF.txt");     //good
+        File input4 = new File("TestCases/easy2_CNF.txt");     //good?
+        File input5 = new File("TestCases/easy3_CNF.txt");     //good?
+        File input6 = new File("TestCases/medium1_CNF.txt");   //good?
+        File input7 = new File("TestCases/medium2_CNF.txt");   //bad
+        File input8 = new File("TestCases/medium3_CNF.txt");   //bad
+        File input9 = new File("TestCases/hard2_CNF.txt");     //bad
+        
 
         //output text files
-        File output1 = new File("TestCases/restest1output.txt");
-        File output2 = new File("TestCases/restest2output.txt");
-        File output3 = new File("TestCases/restest3output.txt");
+        File output1 = new File("TestCases/trivial1_out.txt");  //good
+        File output2 = new File("TestCases/trivial2_out.txt");  //good?
+        File output3 = new File("TestCases/easy1_out.txt");     //good
+        File output4 = new File("TestCases/easy2_out.txt");     //good?
+        File output5 = new File("TestCases/easy3_out.txt");     //good?
+        File output6 = new File("TestCases/medium1_out.txt");   //good?
+        File output7 = new File("TestCases/medium2_out.txt");   //bad
+        File output8 = new File("TestCases/medium3_out.txt");   //bad
+        File output9 = new File("TestCases/hard2_out.txt");     //bad
 
+        //create the FileWriter 
+        FileWriter writer = new FileWriter(output3);
 
         //read in from file
-        
-        Scanner scan = new Scanner(test1);
+        Scanner scan = new Scanner(input3);
 
         //get each line of the file and add its individual characters to their respective String ArrayList and
         //add all of those to another ArrayList (This is the best way I could think of that would make editing
@@ -65,7 +81,7 @@ public class PLResolution {
                 
 
 
-                System.out.println(innerList.toString());
+                //System.out.println(innerList.toString());
             }
 
             clauses.add(innerList);
@@ -75,91 +91,138 @@ public class PLResolution {
 
 
         //FOR TESTING (DELETE WHEN DONE!!!!!!!!!!)
-        System.out.println(clauses.toString());
+        System.out.println("STARTING CLAUSES: " + clauses.toString());
 
+        //call the resolution method
+        boolean result = PLRes(clauses);
         
-        PLRes(clauses);
+        //if it produced an empty clause
+        if (result) {
+            //write "Contradiction" to file
+            writer.write("Contradiction");
+        }
+
+
+        //else it ran out of clauses to resolve
+        else {
+            System.out.println("ALL OF THE CLAUSES: " + clauses);
+            ArrayList<String> finalClauses = new ArrayList<String>();
+
+            //turn each inner arraylist into a string (removing square brackets and whitespace) so that the clauses can be sorted
+            for (ArrayList<String> s : clauses) {
+                finalClauses.add(s.toString().replace("[", "").replace("]", "").replace(" ", ""));
+                
+            }
+
+            //sort the clauses by ASCII order
+            Collections.sort(finalClauses, Collections.reverseOrder());
+
+
+            //System.out.println("\nSORTED: " + finalClauses);
+
+
+            //write the clauses to the output file (already sorted in ASCII order)
+            for (String s : finalClauses) {
+                writer.write(s + "\n");
+            }
+            
+
+        }
+
+        writer.close();
 
     }
 
 
-    public static void PLRes (ArrayList<ArrayList<String>> c) {
-        ArrayList<String> cur1, cur2;
-        boolean more;
+    public static boolean PLRes (ArrayList<ArrayList<String>> c) {
+        ArrayList<String> cur1, cur2, sub1, sub2;
+        ArrayList<ArrayList<String>> resolvents;
         String curElem;
-
-
-        //so i think i have to find VAR and ~VAR and remove them and 
-        //combine their neighbors together with an OR
-        //example from the slides says (A|P),(B|~P) turns into (A|B)
-
-        //so maybe if you find two that match, remove the VAR and ~VAR from their respective strings
-        //then combine the remaining strings into the first spot or something????????????????????
-
-        //SHOULD I USE STRINGBUILDERS AGAIN? ARRAYLIST OF STRINGBUILDERS???
-        //OR MAYBE AND ARRAYLIST OF CHAR ARRAYLISTS????????????????????????
 
         
         while (true) {
 
-            more = false;
+            resolvents = new ArrayList<ArrayList<String>>();
 
-            
-
-
-            //for each inner arraylist
+            //for each inner arraylist (clause)
             for (int x = 0; x < c.size(); x++) {
-                cur1 = c.get(x);
+                cur1 = c.get(x); //get the inner arraylist at x in the outer arraylist
 
-                //for each element in that arraylist
-                for (int y = 0; y < cur1.size(); y++) {
+                //for every other inner arraylist (clause) to compare to
+                for (int y = 0; y < c.size(); y++) {
+                    cur2 = c.get(y);
 
-                    //use my getOpposite method to get the opposite string we are looking for
-
-                    
-                    curElem = getOpposite(cur1.get(y)); //get the string we are looking for (opposite of current string)
-
-
-
+                    //skip checking within the same arraylist SHOULD I DO THIS??????????????????????????????????
+                    if (x == y) {
+                        break;
+                    }
                     
 
-                    //check every other array to see if it contains the value we are looking for
-                    //z=x+1 we only need to check the next ArrayList and beyond, doing all arraylists for each
-                    //character would just review duplicates. RIGHT???????????????????????????????????????????
-                    for (int z = x+1; z < c.size(); z++) {
-                        cur2 = c.get(z);
+                    //for each element in the first arraylist (clause)
+                    for (int z = 0; z < cur1.size(); z++) {
 
-                        //skip checking within the same arraylist SHOULD I DO THIS??????????????????????????????????
-                        if (z == x) {
-                            break;
-                        }
+                        curElem = getOpposite(cur1.get(z)); //get the string we are looking for (opposite of current string)
 
+
+                        //if the second arraylist (clause) contains the element we are looking for
                         if (cur2.contains(curElem)) {
-                            //use Contains() method to see if an arraylist contains what were looking for
-                            //then delete the current string we are searching with
-                            //then delete the opposite one we have found
-                            //JOIN THESE TWO TOGETHER?????????????????????????????????????????????????????????????
-                            
-                            //remove the element and its opposite from their respective arraylists
-                            cur1.remove(y);
-                            cur2.remove(cur2.indexOf(curElem));
-                            
-                            //append the second arraylist to the original
-                            cur1.addAll(cur2);
 
-                            //remove the second arraylist
-                            c.remove(cur2);
+                            //create a copy of the original clause and remove the current element
+                            sub1 = new ArrayList<String>(cur1);
+                            sub1.remove(z);
+                            
+                            //create a copy of the other clause and remove the opposite of the current element
+                            sub2 = new ArrayList<String>(cur2);
+                            sub2.remove(cur2.indexOf(curElem));
+                            
 
-                            //if something is modified, we have to re look at possible resolutions again
-                            more = true;
+                            //append these copies together
+                            sub1.addAll(sub2);
+
+
+                            //it has produced an empty clause, there is a contradiction
+                            if (sub1.isEmpty()) {
+                                return true;
+                            }
+
+
+                            //add the newly created clause to the resolvents arraylist
+                            resolvents.add(sub1);
+
+
+                            //break becuase there shouldnt be anymore of the current element we are looking for in this specific clause, move to the next element. Just saves on memory
+                            break; 
+
+
 
                         }
-
                     }
 
 
+                    
+                    //if it is, return false
+
+                    //else add NEW to CLAUSES
 
 
+
+                    //CLAUSES is the set of all clauses
+                    //NEW is an empty list thing
+
+                    //From the site thing. if any clause resolution produces any empty clause, then conradiction
+                    //it only has to be one empty clause to be unsatisfiable
+
+
+                    //if it is not empty (clause), add the clause to NEW
+
+                    //THE REASON IT SAYS RESOLVENTS IS BECAUSE IT IS TALKING ABOUT MULTIPLE RESOLUTIONS FROM A PAIR
+                    //so i do it letter by letter, every time two clauses has opposites, add that resolvent to NEW
+                    //if you see another in the same clause, add that one to NEW
+                    //after a pair has been checked, append all of those resolvents to NEW
+
+                    //outside of for loop:
+                        //if NEW is a subset of CLAUSES, then return false. IT IS DONE???
+                        //else add NEW to the CLAUSES
 
 
 
@@ -168,33 +231,28 @@ public class PLResolution {
 
             }
 
+            //CHECK FOR DUPLICATES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+            //if the resolvents from the previous two clauses are not a subset of the list of all clauses
+            //add the non duplicates into the list of all clauses
+            if (!c.containsAll(resolvents)) {
 
+                //add all of the non duplicates
+                for (ArrayList<String> a : resolvents) {
+                    if (!c.contains(a)) {
+                        c.add(a);
+                    }
+                }
 
-
-            //if there are no more clauses to resolve
-            if (more == false) {
-
-                break;
             }
 
-            //produces an empty clause
-            //if () {
-                //make file ONLY CONTAIN "Contradiction"
-            //    break;
-            //} 
-                ?//DO NOT SKIP CHECKING WITHIN ITS OWN ARRAYLIST (~A,B) and (A,~B) turns into (B,~B) which needs to cancel out!!!!!!!!!!!!
+            //else return false
+            else {
+                return false;
+            }
 
 
         }
-
-        
-
-        //WHAT ABOUT TWO ~A and one A. Do THEY ALL CANCEL OUT????????????????? or just one per?????
-
-
-
-        System.out.println(c.toString());
 
 
     }

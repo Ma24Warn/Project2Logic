@@ -74,3 +74,32 @@ For PLResolution.java
 -Ensure output is correctly formatted, similar to how I did it in CNFConverter.java im assuming
 -figure out what producing an empty clause means and how to only write the one thing to the output file
 -it also has to write to an output file
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DOES IT RESOLVE WITH ITSELF???????????????????????????
+DONT FORGET WRITE UP
+EASY2_CNF DEFINITELY SHOULD NOT HAVE A ~Z
+
+
+Ask about removing opposites within the same clause, is this just removing opposites within the same clause or does this also yield a new clause?
+
+Ask about the ordering for the elements within each clause before they are written to the file. Should the elements within
+each clause be sorted lexicographically and then each clause should be written to the file in ASCII order as stated in the instructions?
+
+I only noticed this while testing easy1, but in the easy1_out file, the individual ~a, ~b, ~c, and ~d clauses were not in the output file but I am just wondering
+if they should be because the output file should contain the original clauses as well as the new ones.

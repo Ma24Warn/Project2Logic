@@ -1,6 +1,5 @@
 p,q
-q,~p
 p,~q
-~p
-r
+~p,q
+~p,r
 ~p,~q,~r

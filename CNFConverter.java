@@ -21,15 +21,15 @@ public class CNFConverter {
     public static void main(String args[]) throws IOException {
 
         //input test cases
-        File test1 = new File("TestCases/trivial1_in.txt"); //good
-        File test2 = new File("TestCases/trivial2_in.txt"); //good?
-        File test3 = new File("TestCases/easy1_in.txt");    //good
-        File test4 = new File("TestCases/easy2_in.txt");    //good?
-        File test5 = new File("TestCases/easy3_in.txt");    //good?
-        File test6 = new File("TestCases/medium1_in.txt");  //good?
-        File test7 = new File("TestCases/medium2_in.txt");  //bad
-        File test8 = new File("TestCases/medium3_in.txt");  //bad
-        File test9 = new File("TestCases/hard2_in.txt");    //bad
+        File input1 = new File("TestCases/trivial1_in.txt"); //good
+        File input2 = new File("TestCases/trivial2_in.txt"); //good?
+        File input3 = new File("TestCases/easy1_in.txt");    //good
+        File input4 = new File("TestCases/easy2_in.txt");    //good?
+        File input5 = new File("TestCases/easy3_in.txt");    //good?
+        File input6 = new File("TestCases/medium1_in.txt");  //good?
+        File input7 = new File("TestCases/medium2_in.txt");  //bad
+        File input8 = new File("TestCases/medium3_in.txt");  //bad
+        File input9 = new File("TestCases/hard2_in.txt");    //bad
         
 
         //output text files
@@ -44,12 +44,12 @@ public class CNFConverter {
         File output9 = new File("TestCases/hard2_CNF.txt");     //bad
 
         //read in from file
-        Scanner scan = new Scanner(test6);
+        Scanner scan = new Scanner(input4);
         String plSentence = scan.nextLine();
         scan.close();
 
         //send Propositional Logic sentence to CNF converter method
-        cnfConvert(plSentence, output6);
+        cnfConvert(plSentence, output4);
 
     }
 
@@ -527,12 +527,12 @@ public class CNFConverter {
         }
 
         System.out.println("STEP3    " + PLString.toString());
-        
-        index = 0; //reset index back to 0 to be reused
 
 
         //Sort and print out clauses
         char curChar; //holds the value of the current character we are looking at
+        ArrayList<String> finalList = new ArrayList<String>();
+        ArrayList<String> tempList;
 
         //go through final string and delete all parens and replace all | with ,
         for (int z = 0; z < PLString.toString().length(); z++) {
@@ -547,46 +547,52 @@ public class CNFConverter {
         //String array to get each clause, all of which are separated by the & symbol
         String[] clauses = PLString.toString().split("&");
 
+
         //go through each of those clauses
         for (String str : clauses) {
 
-            //create String ArrayLists to hold the regular letters and letters with a ~
-            ArrayList<String> pos = new ArrayList<String>();
-            ArrayList<String> neg = new ArrayList<String>();
+            //create String ArrayList to hold each element of the clause
+            tempList = new ArrayList<String>();
 
             //go through the values of each clause
             for (int x = 0; x < str.length(); x++) {
 
                 //if the character has a ~
                 if (str.charAt(x) == '~') {
-                    neg.add("~" + str.charAt(x+1)); //add it to the negative arraylist
+                    tempList.add("~" + str.charAt(x+1));
                 }
 
                 //else if the first character is letter (prevents out of bounds for the next else if)
                 else if (x == 0 && Character.isLetter(str.charAt(x))) {
-                    pos.add(Character.toString(str.charAt(x))); //add it to the positive arraylist
+                    tempList.add(Character.toString(str.charAt(x)));
                 }
 
                 //else if the character is a letter which is not preceded by a NOT
                 else if (x != 0 && Character.isLetter(str.charAt(x)) && str.charAt(x-1) != '~') {
-                    pos.add(Character.toString(str.charAt(x))); //add it to the positive arraylist
+                    tempList.add(Character.toString(str.charAt(x)));
                 }
 
             }
 
-            //sort the ArrayLists in lexicographical order
-            Collections.sort(pos);
-            Collections.sort(neg);
-
-            //concatenate the ArrayLists, with the NOT letters coming last
-            pos.addAll(neg);
+            //sort the elements in the clause by lexicographical order
+            Collections.sort(tempList);
       
-            //write to output file (replace the square brackets with nothing and remove white space)
-            writer.write(pos.toString().replace("[", "").replace("]", "").replace(" ", ""));
-            writer.write("\n");
+            //add each clause to the final arraylist of strings, removing the square brackets and whitespace
+            finalList.add(tempList.toString().replace("[", "").replace("]", "").replace(" ", ""));
+            
         }
 
+        //sort each clause by lexicographical order
+        Collections.sort(finalList);
+
+        //write the sorted clauses into the output file
+        for (String fString : finalList) {
+            writer.write(fString + "\n");
+        }
+        
+
         writer.close();
+
     }
 
 

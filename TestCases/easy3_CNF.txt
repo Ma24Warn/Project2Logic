@@ -1,4 +1,4 @@
 u,w
-v,x,~u
-x,~u
+~u,v,z
+~u,x
 ~u,~x
