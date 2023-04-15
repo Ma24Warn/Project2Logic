@@ -1,1 +1,6 @@
-Contradiction
+b,e
+b,~c
+d
+~a
+~b,~e
+~c,~e

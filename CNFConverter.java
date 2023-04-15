@@ -44,12 +44,12 @@ public class CNFConverter {
         File output9 = new File("TestCases/hard2_CNF.txt");     
 
         //read in from file
-        Scanner scan = new Scanner(input4);
+        Scanner scan = new Scanner(input3);
         String plSentence = scan.nextLine();
         scan.close();
 
         //send Propositional Logic sentence to CNF converter method
-        cnfConvert(plSentence, output4);
+        cnfConvert(plSentence, output3);
 
     }
 
@@ -64,7 +64,7 @@ public class CNFConverter {
         //create FileWriter object
         FileWriter writer = new FileWriter(f);
 
-        System.out.println("ORIGINAL " + PLString.toString());
+        //System.out.println("ORIGINAL " + PLString.toString());
 
         //STEP ONE
         //Remove > (implies) and = (biconditional)
@@ -124,7 +124,7 @@ public class CNFConverter {
         }
 
 
-        System.out.println("STEP1 P1 " + PLString.toString());
+        //System.out.println("STEP1 P1 " + PLString.toString());
 
         index = 0; //reset index back to 0 to be reused
 
@@ -158,7 +158,7 @@ public class CNFConverter {
 
         }
 
-        System.out.println("STEP1 P2 " + PLString.toString());
+        //System.out.println("STEP1 P2 " + PLString.toString());
 
         index = 0; //reset index back to 0 to be reused
 
@@ -234,7 +234,7 @@ public class CNFConverter {
             index++;  
         }
 
-        System.out.println("STEP2 P1 " + PLString.toString());
+        //System.out.println("STEP2 P1 " + PLString.toString());
 
         index = 0; //reset index back to 0 to be reused
 
@@ -257,7 +257,7 @@ public class CNFConverter {
 
         }
 
-        System.out.println("STEP2 P2 " + PLString.toString());
+        //System.out.println("STEP2 P2 " + PLString.toString());
 
         index = 0; //reset index back to 0 to be reused
 
@@ -295,24 +295,16 @@ public class CNFConverter {
                         //get the string of what we want to distribute over
                         ind3 = forwardParen(PLString.toString(), index+1);
                         sub = PLString.substring(index+1, ind3+1);   
-                        
-                        System.out.println("SUBSTRING IS " + sub);
 
                         //if this string does not match the regular expression
                         if (!Pattern.matches(regex, sub)) {
                             cnfForm = false; //this means we can modify the PLString
-
-                            System.out.println("does not conform");
-
                         }
 
                         //else it must then be in the correct form, so we can skip this distribution
                         else {
                             cnfForm = true; //do not modify PLString
-                            more = false; //no changes were actually made, so we set this back to false
-                        
-                            System.out.println("does conform");
-                        
+                            more = false; //no changes were actually made, so we set this back to false                        
                         }
 
                         //if the string did not match the regular expression
@@ -389,11 +381,6 @@ public class CNFConverter {
 
                             //concatenate all gathered strings into a substring and update PLString with it
                             substr.append("(" + prev + outer + next1 + ")" + inner + "(" + prev + outer + next2 + ")");
-
-                            System.out.println("prev is " + prev);
-                            System.out.println("next1 is " + next1);
-                            System.out.println("next2 is " + next2);
-                            System.out.println("substring to insert is " + substr.toString());
 
 
                             if (more == false) {
@@ -526,7 +513,7 @@ public class CNFConverter {
 
         }
 
-        System.out.println("STEP3    " + PLString.toString());
+        //System.out.println("STEP3    " + PLString.toString());
 
 
         //Sort and print out clauses

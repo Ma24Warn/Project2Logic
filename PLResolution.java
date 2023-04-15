@@ -50,10 +50,10 @@ public class PLResolution {
         File output10 = new File("TestCases/hard2_out.txt");  
 
         //create the FileWriter 
-        FileWriter writer = new FileWriter("TestCases/OUTPUTTESTER.txt");
+        FileWriter writer = new FileWriter(output2);
 
         //read in from file
-        Scanner scan = new Scanner(input10);
+        Scanner scan = new Scanner(input2);
 
         //get each line of the file and add its individual characters to their respective String ArrayList and
         //add all of those to another ArrayList (This is the best way I could think of that would make editing
@@ -96,6 +96,8 @@ public class PLResolution {
         //call the resolution method
         boolean result = PLRes(clauses);
 
+
+
         
         //if it produced an empty clause
         if (result) {
@@ -106,14 +108,24 @@ public class PLResolution {
         else {
             ArrayList<String> finalClauses = new ArrayList<String>();
 
+                    
+            //remove opposite elements within the same clause. I chose to put this here because I was trying to
+            //call these in PLRes method, but removing the duplicates as clauses were being resolved meant they
+            //were just being added back and causing an infinite loop. Here it removes these types of clauses
+            //after a resolution is done
+            removeOpposites(clauses);
+
             //turn each inner arraylist into a string (removing square brackets and whitespace) so that the clauses can be sorted
+            //this also sorts the elements within each clause
             for (ArrayList<String> s : clauses) {
+
+                Collections.sort(s); //sort the elements within each clause in lexicographical order           
                 finalClauses.add(s.toString().replace("[", "").replace("]", "").replace(" ", ""));
                 
             }
 
             //sort the clauses by ASCII order
-            Collections.sort(finalClauses, Collections.reverseOrder());
+            Collections.sort(finalClauses);
 
             //write the clauses to the output file (already sorted in ASCII order)
             for (String s : finalClauses) {
@@ -138,7 +150,7 @@ public class PLResolution {
 
         //loop until something is returned
         while (true) {
-
+            
             resolvents = new ArrayList<ArrayList<String>>();
 
             //for each inner arraylist (clause)
@@ -149,20 +161,18 @@ public class PLResolution {
                 for (int y = 0; y < c.size(); y++) {
                     cur2 = c.get(y);
 
-
-                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    //skip checking within the same arraylist SHOULD I DO THIS??????????????????????????????????
+                    //Here I am choosing to skip over a clause trying resolve with itself. If a single clause
+                    //has a letter and its opposite, then the whole clause is true and can be dropped. Removing
+                    //these types of clauses happens back in the main method before the clauses are written to
+                    //the file
                     if (x == y) {
                         break;
-                    } //~b,b AND ALSO A b,~b... why arent they resolving????
-                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+                    }
 
                     //for each element in the first arraylist (clause)
                     for (int z = 0; z < cur1.size(); z++) {
 
                         curElem = getOpposite(cur1.get(z)); //get the string we are looking for (opposite of current string)
-
 
                         //if the second arraylist (clause) contains the element we are looking for
                         if (cur2.contains(curElem)) {
@@ -175,25 +185,19 @@ public class PLResolution {
                             sub2 = new ArrayList<String>(cur2);
                             sub2.remove(cur2.indexOf(curElem));
                             
-
                             //append these copies together
                             sub1.addAll(sub2);
-
 
                             //it has produced an empty clause, there is a contradiction
                             if (sub1.isEmpty()) {
                                 return true;
                             }
 
-
                             //add the newly created clause to the resolvents arraylist
                             resolvents.add(sub1);
 
-
-                            //break becuase there shouldnt be anymore of the current element we are looking for in this specific clause, move to the next element. Just saves on memory
-                            break; 
-
-
+                            //break because there shouldnt be anymore of the current element we are looking for in this specific clause, move to the next element. Just saves on memory
+                            break;
 
                         }
                     }
@@ -214,6 +218,7 @@ public class PLResolution {
                     }
                 }
 
+
             }
 
             //else return false
@@ -226,6 +231,35 @@ public class PLResolution {
 
 
     }
+
+
+    //this method goes through all of the current clauses and removes any that have a letter and its opposite in the same clause
+    public static void removeOpposites(ArrayList<ArrayList<String>> cl) {
+        String cur;
+        ArrayList<String> curClause;
+
+        //go through every clause (I originally had this as a for each loop but it didn't like me removing this from what I was iterating over, so a regular for loop had to do)
+        for (int z = 0; z < cl.size(); z++) {
+            curClause = new ArrayList<String>(cl.get(z));
+
+            //for each letter
+            for (int x = 0; x < curClause.size(); x++) {
+                cur = getOpposite(curClause.get(x));
+
+                //if the clause it is in contains its opposite, remove that entire clause
+                if (curClause.contains(cur)) {
+                    cl.remove(z);
+                    z = 0; //i had to do this because removing strings from what I am iterating over was missing certain things
+                    break; //we dont need to check any further
+                }
+
+
+            }
+
+        }
+        
+    }
+
 
 
     //this method takes in a string and returns the opposite of it (x into ~x or ~x into x)
