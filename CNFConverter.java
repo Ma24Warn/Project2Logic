@@ -44,12 +44,12 @@ public class CNFConverter {
         File output9 = new File("TestCases/hard2_CNF.txt");     
 
         //read in from file
-        Scanner scan = new Scanner(input3);
+        Scanner scan = new Scanner(input1);
         String plSentence = scan.nextLine();
         scan.close();
 
         //send Propositional Logic sentence to CNF converter method
-        cnfConvert(plSentence, output3);
+        cnfConvert(plSentence, output1);
 
     }
 

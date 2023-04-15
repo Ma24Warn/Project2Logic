@@ -50,10 +50,10 @@ public class PLResolution {
         File output10 = new File("TestCases/hard2_out.txt");  
 
         //create the FileWriter 
-        FileWriter writer = new FileWriter(output2);
+        FileWriter writer = new FileWriter(output1);
 
         //read in from file
-        Scanner scan = new Scanner(input2);
+        Scanner scan = new Scanner(input1);
 
         //get each line of the file and add its individual characters to their respective String ArrayList and
         //add all of those to another ArrayList (This is the best way I could think of that would make editing
@@ -80,6 +80,7 @@ public class PLResolution {
                     innerList.add(String.valueOf(tempArray[x]));
                 }
 
+                //its a normal letter and it is not preceded by a ~
                 else if (Character.isLetter(tempArray[x]) && tempArray[x-1] != '~') {
                     innerList.add(String.valueOf(tempArray[x]));
                 }
@@ -97,8 +98,6 @@ public class PLResolution {
         boolean result = PLRes(clauses);
 
 
-
-        
         //if it produced an empty clause
         if (result) {
             writer.write("Contradiction");
@@ -221,7 +220,7 @@ public class PLResolution {
 
             }
 
-            //else return false
+            //else we have run out of clauses to resolve, return false
             else {
                 return false;
             }
@@ -259,7 +258,6 @@ public class PLResolution {
         }
         
     }
-
 
 
     //this method takes in a string and returns the opposite of it (x into ~x or ~x into x)
